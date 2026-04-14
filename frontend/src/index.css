@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-gold: var(--gold);
+  --color-homelux-dark: var(--homelux-dark);
+  --color-homelux-bg: var(--homelux-bg);
+  --color-homelux-muted: var(--homelux-muted);
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Homelux Brand */
+  --gold: #C8A96E;
+  --homelux-dark: #1A1A1A;
+  --homelux-bg: #FAF8F5;
+  --homelux-surface: #FFFFFF;
+  --homelux-text: #2C2C2A;
+  --homelux-muted: #888780;
+
+  /* shadcn tokens mapped to Homelux palette */
+  --background: #FAF8F5;
+  --foreground: #2C2C2A;
+  --card: #FFFFFF;
+  --card-foreground: #2C2C2A;
+  --popover: #FFFFFF;
+  --popover-foreground: #2C2C2A;
+  --primary: #1A1A1A;
+  --primary-foreground: #FAF8F5;
+  --secondary: #F0EDE8;
+  --secondary-foreground: #1A1A1A;
+  --muted: #F0EDE8;
+  --muted-foreground: #888780;
+  --accent: #C8A96E;
+  --accent-foreground: #FFFFFF;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: #E8E4DE;
+  --input: #E8E4DE;
+  --ring: #C8A96E;
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: #FAF8F5;
+  --sidebar-foreground: #2C2C2A;
+  --sidebar-primary: #1A1A1A;
+  --sidebar-primary-foreground: #FAF8F5;
+  --sidebar-accent: #F0EDE8;
+  --sidebar-accent-foreground: #1A1A1A;
+  --sidebar-border: #E8E4DE;
+  --sidebar-ring: #C8A96E;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+}
+
+/* Hero animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-hero-1 { animation: fadeInUp 0.8s ease both; }
+.animate-hero-2 { animation: fadeInUp 0.8s ease 0.2s both; }
+.animate-hero-3 { animation: fadeInUp 0.8s ease 0.4s both; }
+.animate-hero-4 { animation: fadeInUp 0.8s ease 0.6s both; }
+
+/* Smooth underline for category tabs */
+.category-tab {
+  position: relative;
+  transition: color 0.25s ease;
+}
+.category-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--gold);
+  transition: width 0.3s ease;
+}
+.category-tab.active::after,
+.category-tab:hover::after {
+  width: 100%;
+}
