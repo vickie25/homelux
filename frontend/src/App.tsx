@@ -1,29 +1,30 @@
-import { Navbar } from "@/components/homelux/Navbar"
-import { HeroBanner } from "@/components/homelux/HeroBanner"
-import { AboutStrip } from "@/components/homelux/AboutStrip"
-import { CollectionsGrid } from "@/components/homelux/CollectionsGrid"
-import { LifestyleBanner } from "@/components/homelux/LifestyleBanner"
-import { ShopByCategory } from "@/components/homelux/ShopByCategory"
-import { PreOrderBanner } from "@/components/homelux/PreOrderBanner"
-import { Footer } from "@/components/homelux/Footer"
-import { WhatsAppButton } from "@/components/homelux/WhatsAppButton"
+import React from 'react';
+import { Navbar } from './components/shared/Navbar';
+import { Hero } from './components/landing/Hero';
+import { USPBar } from './components/landing/USPBar';
+import { BannerSections } from './components/landing/BannerSections';
+import { CategoryGrid } from './components/landing/CategoryGrid';
+import { ProductSlider } from './components/landing/ProductSlider';
+import { Testimonials, NewsletterSection } from './components/landing/Testimonials';
+import { Footer } from './components/shared/Footer';
 
-export function App() {
+function App() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "var(--homelux-bg)" }}>
+    <div className="min-h-screen bg-white">
       <Navbar />
       <main>
-        <HeroBanner />
-        <AboutStrip />
-        <CollectionsGrid />
-        <LifestyleBanner />
-        <ShopByCategory />
-        <PreOrderBanner />
+        <Hero />
+        <USPBar />
+        <BannerSections />
+        <CategoryGrid />
+        <ProductSlider title="The Best For Your Home" />
+        <ProductSlider title="Pieces That Complete Your Space" />
+        <Testimonials />
+        <NewsletterSection />
       </main>
       <Footer />
-      <WhatsAppButton />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
