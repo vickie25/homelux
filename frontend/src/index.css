@@ -6,12 +6,31 @@
   --color-accent: #F99D1C;
   --color-hero: #8B5E3C;
   --color-brand-purple: #8A2BE2;
+  --color-warm-border: #F5E6C8;
+  
+  /* Admin Dashboard Tokens */
+  --color-admin-navy: #1B3A5C;
+  --color-admin-bg: #F8F9FA;
+  --color-admin-card: #FFFFFF;
+  --color-admin-border: #EDF2F7;
+  --color-admin-text: #2D3748;
+  --color-admin-muted: #718096;
   
   --font-heading: "Playfair Display", serif;
   --font-body: "Inter", sans-serif;
   
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-card: 2rem;
+  --radius-admin: 1rem;
+}
+
+@utility shadow-admin {
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+}
+
+@utility shadow-admin-hover {
+  box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.08);
 }
 
 @layer base {
