@@ -29,6 +29,7 @@ import {
   Bar
 } from 'recharts';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { cn } from '../../../lib/utils';
 
 // Mock Data
