@@ -88,7 +88,7 @@ const StatCard = ({ label, value, trend, trendValue, icon: Icon, color }: any) =
           {trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
           <span>{trendValue}</span>
         </div>
-        <span className="text-[10px] text-admin-muted font-bold uppercase tracking-widest italic">vs last month</span>
+        <span className="text-[10px] text-admin-muted font-bold uppercase tracking-widest">vs last month</span>
       </div>
     </div>
   </motion.div>
@@ -139,7 +139,7 @@ export const AdminDashboardHome: React.FC = () => {
         <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-admin-border shadow-admin">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight italic uppercase">Revenue Over Time</h2>
+              <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight uppercase">Revenue Over Time</h2>
               <p className="text-xs text-admin-muted font-bold mt-1">Comparison between <span className="text-accent underline">Online</span> and <span className="text-admin-navy underline">In-Store</span> performance</p>
             </div>
             <div className="flex gap-2">
@@ -209,7 +209,7 @@ export const AdminDashboardHome: React.FC = () => {
 
         {/* Status Distribution */}
         <div className="bg-white p-8 rounded-[2rem] border border-admin-border shadow-admin">
-          <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight italic uppercase mb-2">Order Status</h2>
+          <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight uppercase mb-2">Order Status</h2>
           <p className="text-xs text-admin-muted font-bold mb-8">Performance breakdown by fulfillment</p>
           
           <div className="h-[250px] w-full relative min-w-0">
@@ -232,7 +232,7 @@ export const AdminDashboardHome: React.FC = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-               <span className="text-3xl font-black text-admin-navy tracking-tighter italic uppercase">100%</span>
+               <span className="text-3xl font-black text-admin-navy tracking-tighter uppercase">100%</span>
                <span className="text-[10px] text-admin-muted font-black uppercase tracking-widest">Efficiency</span>
             </div>
           </div>
@@ -244,7 +244,7 @@ export const AdminDashboardHome: React.FC = () => {
                   <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                   <span className="text-xs font-bold text-admin-text">{item.name}</span>
                 </div>
-                <span className="text-xs font-black text-admin-navy italic uppercase tracking-widest">{item.value}%</span>
+                <span className="text-xs font-black text-admin-navy uppercase tracking-widest">{item.value}%</span>
               </div>
             ))}
           </div>
@@ -256,8 +256,8 @@ export const AdminDashboardHome: React.FC = () => {
         {/* Recent Orders */}
         <div className="lg:col-span-2 bg-white rounded-[2rem] border border-admin-border shadow-admin overflow-hidden">
           <div className="p-8 pb-4 flex items-center justify-between">
-            <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight italic uppercase">Recent Orders</h2>
-            <Link to="/admin/orders" className="text-xs font-black text-accent hover:underline flex items-center gap-1 uppercase tracking-widest italic decoration-2 decoration-accent underline-offset-4">
+            <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight uppercase">Recent Orders</h2>
+            <Link to="/admin/orders" className="text-xs font-black text-accent hover:underline flex items-center gap-1 uppercase tracking-widest decoration-2 decoration-accent underline-offset-4">
               View All Orders <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -275,7 +275,7 @@ export const AdminDashboardHome: React.FC = () => {
               <tbody className="divide-y divide-admin-border">
                 {RECENT_ORDERS.map((order) => (
                   <tr key={order.id} className="hover:bg-admin-bg/30 transition-colors group cursor-pointer">
-                    <td className="px-8 py-5 font-black text-sm text-admin-navy group-hover:text-accent italic">{order.id}</td>
+                    <td className="px-8 py-5 font-black text-sm text-admin-navy group-hover:text-accent">{order.id}</td>
                     <td className="px-8 py-5">
                        <div className="flex items-center gap-3">
                          <div className="w-8 h-8 rounded-full bg-admin-bg border border-admin-border flex items-center justify-center text-[10px] font-black text-admin-navy">
@@ -296,7 +296,7 @@ export const AdminDashboardHome: React.FC = () => {
                         {order.status}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-xs text-admin-muted font-bold italic">{order.date}</td>
+                    <td className="px-8 py-5 text-xs text-admin-muted font-bold">{order.date}</td>
                   </tr>
                 ))}
               </tbody>
@@ -308,7 +308,7 @@ export const AdminDashboardHome: React.FC = () => {
         <div className="space-y-8">
            {/* Top Selling */}
            <div className="bg-white p-8 rounded-[2rem] border border-admin-border shadow-admin">
-             <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight italic uppercase mb-6">Top Selling</h2>
+             <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight uppercase mb-6">Top Selling</h2>
              <div className="space-y-6">
                 {TOP_PRODUCTS.map((product) => (
                   <div key={product.name} className="flex items-center gap-4 group cursor-pointer">
@@ -316,7 +316,7 @@ export const AdminDashboardHome: React.FC = () => {
                        <Package className="w-6 h-6 text-admin-navy group-hover:text-accent transition-colors" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-black text-admin-navy truncate italic uppercase tracking-tight">{product.name}</p>
+                      <p className="text-sm font-black text-admin-navy truncate uppercase tracking-tight">{product.name}</p>
                       <p className="text-[10px] text-admin-muted font-bold tracking-widest uppercase">{product.category}</p>
                       <div className="flex items-center justify-between mt-2">
                          <span className="text-xs font-black text-admin-text">KShs {product.revenue}</span>
@@ -331,14 +331,14 @@ export const AdminDashboardHome: React.FC = () => {
                   </div>
                 ))}
              </div>
-             <button className="w-full mt-8 py-3 border-2 border-dashed border-admin-border rounded-2xl text-xs font-black text-admin-navy hover:border-accent hover:text-accent transition-all uppercase tracking-widest italic group">
+             <button className="w-full mt-8 py-3 border-2 border-dashed border-admin-border rounded-2xl text-xs font-black text-admin-navy hover:border-accent hover:text-accent transition-all uppercase tracking-widest group">
                View Performance Analysis <ArrowUpRight className="inline-block ml-1 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
              </button>
            </div>
 
            {/* Quick Activity Feed */}
            <div className="bg-admin-navy p-8 rounded-[2rem] shadow-xl text-white">
-              <h2 className="text-xl font-heading font-black text-white tracking-tight italic uppercase mb-6 flex items-center gap-2">
+              <h2 className="text-xl font-heading font-black text-white tracking-tight uppercase mb-6 flex items-center gap-2">
                 <Activity className="w-5 h-5 text-accent" />
                 Live Feed
               </h2>
@@ -348,7 +348,7 @@ export const AdminDashboardHome: React.FC = () => {
                     <ShoppingCart className="w-4 h-4 text-accent" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold leading-tight">New Order <span className="text-accent italic">#HX-4521</span> received</p>
+                    <p className="text-xs font-bold leading-tight">New Order <span className="text-accent">#HX-4521</span> received</p>
                     <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">2 MINS AGO</p>
                   </div>
                 </div>
@@ -357,7 +357,7 @@ export const AdminDashboardHome: React.FC = () => {
                     <AlertTriangle className="w-4 h-4 text-yellow-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold leading-tight">Low stock alert for <span className="text-yellow-400 italic">"Finch Bed"</span></p>
+                    <p className="text-xs font-bold leading-tight">Low stock alert for <span className="text-yellow-400">"Finch Bed"</span></p>
                     <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">12 MINS AGO</p>
                   </div>
                 </div>
@@ -366,7 +366,7 @@ export const AdminDashboardHome: React.FC = () => {
                     <Users className="w-4 h-4 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold leading-tight">New customer <span className="text-blue-400 italic">"Sarah M."</span> registered</p>
+                    <p className="text-xs font-bold leading-tight">New customer <span className="text-blue-400">"Sarah M."</span> registered</p>
                     <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">1 HR AGO</p>
                   </div>
                 </div>

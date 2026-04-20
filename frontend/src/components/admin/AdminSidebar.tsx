@@ -70,11 +70,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               exit={{ opacity: 0, x: -20 }}
               className="flex items-center gap-2"
             >
-              <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center font-black text-white italic">H</div>
-              <span className="font-heading font-black tracking-tight text-xl italic uppercase">Homelux <span className="text-accent underline decoration-2 underline-offset-4">Admin</span></span>
+              <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center font-black text-white">H</div>
+              <span className="font-heading font-black tracking-tight text-xl uppercase">Homelux <span className="text-accent underline decoration-2 underline-offset-4">Admin</span></span>
             </motion.div>
           ) : (
-            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center font-black text-white italic text-xl">H</div>
+            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center font-black text-white text-xl">H</div>
           )}
         </AnimatePresence>
       </div>
