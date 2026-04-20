@@ -1,0 +1,106 @@
+{
+  "info": {
+    "name": "Homelux Admin Dashboard API",
+    "_postman_id": "b8d5dd14-86d8-48ba-b4c7-d6cc8db16f42",
+    "description": "Collection for validating admin dashboard APIs end-to-end.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "productId", "value": "1" },
+    { "key": "categoryId", "value": "1" },
+    { "key": "orderId", "value": "1" },
+    { "key": "customerId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@homelux.co.ke\",\n  \"password\": \"your_password\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/refresh/",
+            "body": { "mode": "raw", "raw": "{\n  \"refresh\": \"{{refreshToken}}\"\n}" }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/auth/me/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        { "name": "Stats", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/dashboard/stats/" } },
+        { "name": "Charts", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/dashboard/charts/" } },
+        { "name": "Top Products", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/dashboard/top-products/" } },
+        { "name": "Financials Summary", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/dashboard/financials/summary/" } },
+        { "name": "Reports Overview", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/dashboard/reports/overview/" } },
+        { "name": "Reviews Summary", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/dashboard/reviews/summary/" } },
+        { "name": "Admin Settings", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/dashboard/settings/" } },
+        { "name": "Activity Feed", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/dashboard/activity-feed/" } }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "item": [
+        { "name": "List Products", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/products/?search=sofa&status=PUBLISHED&ordering=-created_at" } },
+        { "name": "Create Product", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/products/", "body": { "mode": "raw", "raw": "{\n  \"name\": \"Demo Sofa\",\n  \"sku\": \"DEMO-SOFA-001\",\n  \"regular_price\": \"150000.00\",\n  \"product_type\": \"SIMPLE\",\n  \"status\": \"PUBLISHED\"\n}" } } },
+        { "name": "List Categories", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/categories/?search=living&ordering=name" } },
+        { "name": "List Product Variants", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/product-variants/" } }
+      ]
+    },
+    {
+      "name": "Sales",
+      "item": [
+        { "name": "List Customers", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/customers/?search=nairobi&ordering=-total_spent" } },
+        { "name": "List Orders", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/orders/?status=PENDING&ordering=-created_at" } },
+        { "name": "List Order Items", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/order-items/" } },
+        { "name": "List Payments", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/payments/" } }
+      ]
+    },
+    {
+      "name": "Inventory and Showrooms",
+      "item": [
+        { "name": "List Showrooms", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/showrooms/?search=nairobi" } },
+        { "name": "List Stock Records", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/inventory/stock/?low_stock=true&ordering=stock_quantity" } }
+      ]
+    },
+    {
+      "name": "Promotions and Delivery",
+      "item": [
+        { "name": "List Coupons", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/promotions/coupons/?is_active=true&ordering=-valid_until" } },
+        { "name": "List Flash Sales", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/promotions/flash-sales/" } },
+        { "name": "List Delivery Zones", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/delivery/zones/" } },
+        { "name": "List Delivery Assignments", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/delivery/assignments/?completed=false&ordering=-id" } }
+      ]
+    },
+    {
+      "name": "Staff",
+      "item": [
+        { "name": "List Staff", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/staff/?role=STORE_MANAGER&is_active=true&ordering=-date_joined" } }
+      ]
+    }
+  ]
+}

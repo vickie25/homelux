@@ -23,6 +23,19 @@ import { SignUpPage } from './components/pages/SignUpPage';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { AdminLoginPage } from './components/pages/admin/AdminLoginPage';
 import { AdminDashboardHome } from './components/pages/admin/AdminDashboardHome';
+import { OrdersPage } from './components/pages/admin/OrdersPage';
+import { ProductsPage } from './components/pages/admin/ProductsPage';
+import { CategoriesPage } from './components/pages/admin/CategoriesPage';
+import { CustomersPage } from './components/pages/admin/CustomersPage';
+import { InventoryPage } from './components/pages/admin/InventoryPage';
+import { PromotionsPage } from './components/pages/admin/PromotionsPage';
+import { DeliveryPage } from './components/pages/admin/DeliveryPage';
+import { FinancialsPage } from './components/pages/admin/FinancialsPage';
+import { AdminShowroomsPage } from './components/pages/admin/AdminShowroomsPage';
+import { ReviewsPage } from './components/pages/admin/ReviewsPage';
+import { ReportsPage } from './components/pages/admin/ReportsPage';
+import { StaffPage } from './components/pages/admin/StaffPage';
+import { SettingsPage } from './components/pages/admin/SettingsPage';
 
 const Home = () => (
   <>
@@ -77,9 +90,19 @@ function App() {
         {/* Admin Dashboard Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboardHome />} />
-          {/* Placeholder routes for future modules */}
-          <Route path="orders" element={<div className="p-8"><h1 className="text-2xl font-heading font-black italic uppercase">Orders Management (Coming Soon)</h1></div>} />
-          <Route path="products" element={<div className="p-8"><h1 className="text-2xl font-heading font-black italic uppercase">Products Management (Coming Soon)</h1></div>} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="categories" element={<CategoriesPage />} />
+          <Route path="customers" element={<CustomersPage />} />
+          <Route path="inventory" element={<InventoryPage />} />
+          <Route path="promotions" element={<PromotionsPage />} />
+          <Route path="delivery" element={<DeliveryPage />} />
+          <Route path="financials" element={<FinancialsPage />} />
+          <Route path="showrooms" element={<AdminShowroomsPage />} />
+          <Route path="reviews" element={<ReviewsPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="staff" element={<StaffPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </Router>

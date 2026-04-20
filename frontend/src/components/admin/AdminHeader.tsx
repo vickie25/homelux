@@ -27,7 +27,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuClick, title = "
           <Menu className="w-5 h-5 text-admin-text" />
         </button>
         <div>
-          <h1 className="text-xl font-heading font-black text-admin-navy tracking-tight uppercase italic underline decoration-accent decoration-2 underline-offset-4">{title}</h1>
+          <h1 className="text-xl font-heading font-black text-admin-navy tracking-tight uppercase underline decoration-accent decoration-2 underline-offset-4">{title}</h1>
           <p className="text-xs text-admin-muted font-medium mt-0.5">Welcome back, <span className="text-admin-navy font-bold">John 👋</span></p>
         </div>
       </div>
