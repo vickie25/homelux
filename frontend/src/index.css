@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -7,7 +7,7 @@
   --color-hero: #8B5E3C;
   --color-brand-purple: #8A2BE2;
   --color-warm-border: #F5E6C8;
-  
+
   /* Admin Dashboard Tokens */
   --color-admin-navy: #1B3A5C;
   --color-admin-bg: #F8F9FA;
@@ -15,10 +15,10 @@
   --color-admin-border: #EDF2F7;
   --color-admin-text: #2D3748;
   --color-admin-muted: #718096;
-  
+
   --font-heading: "Playfair Display", serif;
   --font-body: "Inter", sans-serif;
-  
+
   --radius-xl: 1.5rem;
   --radius-2xl: 2rem;
   --radius-card: 2rem;
@@ -37,8 +37,13 @@
   body {
     @apply bg-[#FDFBF7] text-gray-900 font-body antialiased;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading font-bold tracking-tight;
   }
 }
@@ -76,8 +81,23 @@
 }
 
 @keyframes morph {
-  0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: translate(0, 0) rotate(0deg); }
-  33% { border-radius: 53% 47% 43% 57% / 51% 38% 62% 49%; transform: translate(50px, 100px) rotate(120deg); }
-  66% { border-radius: 70% 30% 30% 70% / 60% 40% 60% 40%; transform: translate(-100px, 50px) rotate(240deg); }
-  100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: translate(0, 0) rotate(360deg); }
+  0% {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  33% {
+    border-radius: 53% 47% 43% 57% / 51% 38% 62% 49%;
+    transform: translate(50px, 100px) rotate(120deg);
+  }
+
+  66% {
+    border-radius: 70% 30% 30% 70% / 60% 40% 60% 40%;
+    transform: translate(-100px, 50px) rotate(240deg);
+  }
+
+  100% {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    transform: translate(0, 0) rotate(360deg);
+  }
 }
