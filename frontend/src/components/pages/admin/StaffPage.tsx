@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  UserCircle, 
-  Plus, 
-  Search, 
-  MoreVertical, 
-  Edit2, 
-  Trash2, 
-  Shield, 
-  Mail, 
+import {
+  UserCircle,
+  Plus,
+  Search,
+  MoreVertical,
+  Edit2,
+  Trash2,
+  Shield,
+  Mail,
   Phone,
   CheckCircle2,
   XCircle,
-  Key
+  Key,
+  Users
 } from 'lucide-react';
 import { staffApi } from '../../../lib/api';
 import { toast } from 'sonner';
 
 const ROLES = [
   { value: 'SUPER_ADMIN', label: 'Super Admin' },
+  { value: 'MANAGER', label: 'Manager' },
   { value: 'SALES_AGENT', label: 'Sales Agent' },
   { value: 'DISPATCHER', label: 'Dispatcher' },
   { value: 'FUNDI', label: 'Fundi' },
@@ -33,7 +35,7 @@ export const StaffPage: React.FC = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const [formData, setFormData] = useState({
     email: '',
     first_name: '',
@@ -107,7 +109,7 @@ export const StaffPage: React.FC = () => {
     }
   };
 
-  const filteredStaff = staff.filter(user => 
+  const filteredStaff = staff.filter(user =>
     `${user.first_name} ${user.last_name} ${user.email}`.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -118,7 +120,7 @@ export const StaffPage: React.FC = () => {
           <h1 className="text-3xl font-heading font-black text-admin-navy tracking-tight uppercase italic">Staff Management</h1>
           <p className="text-admin-muted font-bold mt-1">Manage your team's access and roles.</p>
         </div>
-        <button 
+        <button
           onClick={() => {
             setSelectedUser(null);
             setFormData({
@@ -143,8 +145,8 @@ export const StaffPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 bg-white p-4 rounded-[2rem] border border-admin-border flex items-center px-6">
           <Search className="w-5 h-5 text-admin-muted mr-4" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search by name or email..."
             className="flex-1 h-10 outline-none font-bold text-admin-navy placeholder:text-admin-muted/50"
             value={searchQuery}
@@ -223,7 +225,7 @@ export const StaffPage: React.FC = () => {
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button 
+                      <button
                         onClick={() => {
                           setSelectedUser(user);
                           setFormData({
@@ -241,7 +243,7 @@ export const StaffPage: React.FC = () => {
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         onClick={() => {
                           setSelectedUser(user);
                           setIsPasswordModalOpen(true);
@@ -250,7 +252,7 @@ export const StaffPage: React.FC = () => {
                       >
                         <Key className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDelete(user.id)}
                         className="p-3 hover:bg-red-500 hover:text-white rounded-xl transition-all text-admin-muted group"
                       >
@@ -274,49 +276,49 @@ export const StaffPage: React.FC = () => {
               <h2 className="text-3xl font-heading font-black text-admin-navy uppercase italic mb-8">
                 {selectedUser ? 'Edit Staff Member' : 'Add New Staff'}
               </h2>
-              
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-black text-admin-navy uppercase tracking-widest ml-1">First Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       className="w-full h-14 px-6 bg-admin-bg border border-transparent rounded-2xl focus:bg-white focus:border-accent/40 focus:ring-4 focus:ring-accent/5 transition-all outline-none font-bold"
                       value={formData.first_name}
-                      onChange={e => setFormData({...formData, first_name: e.target.value})}
+                      onChange={e => setFormData({ ...formData, first_name: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-black text-admin-navy uppercase tracking-widest ml-1">Last Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       className="w-full h-14 px-6 bg-admin-bg border border-transparent rounded-2xl focus:bg-white focus:border-accent/40 focus:ring-4 focus:ring-accent/5 transition-all outline-none font-bold"
                       value={formData.last_name}
-                      onChange={e => setFormData({...formData, last_name: e.target.value})}
+                      onChange={e => setFormData({ ...formData, last_name: e.target.value })}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-xs font-black text-admin-navy uppercase tracking-widest ml-1">Email Address</label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     required
                     className="w-full h-14 px-6 bg-admin-bg border border-transparent rounded-2xl focus:bg-white focus:border-accent/40 focus:ring-4 focus:ring-accent/5 transition-all outline-none font-bold"
                     value={formData.email}
-                    onChange={e => setFormData({...formData, email: e.target.value})}
+                    onChange={e => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-black text-admin-navy uppercase tracking-widest ml-1">Assign Role</label>
-                    <select 
+                    <select
                       className="w-full h-14 px-6 bg-admin-bg border border-transparent rounded-2xl focus:bg-white focus:border-accent/40 focus:ring-4 focus:ring-accent/5 transition-all outline-none font-bold appearance-none"
                       value={formData.role}
-                      onChange={e => setFormData({...formData, role: e.target.value})}
+                      onChange={e => setFormData({ ...formData, role: e.target.value })}
                     >
                       {ROLES.map(role => (
                         <option key={role.value} value={role.value}>{role.label}</option>
@@ -325,11 +327,11 @@ export const StaffPage: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-black text-admin-navy uppercase tracking-widest ml-1">Phone Number</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       className="w-full h-14 px-6 bg-admin-bg border border-transparent rounded-2xl focus:bg-white focus:border-accent/40 focus:ring-4 focus:ring-accent/5 transition-all outline-none font-bold"
                       value={formData.phone_number}
-                      onChange={e => setFormData({...formData, phone_number: e.target.value})}
+                      onChange={e => setFormData({ ...formData, phone_number: e.target.value })}
                     />
                   </div>
                 </div>
@@ -337,20 +339,20 @@ export const StaffPage: React.FC = () => {
                 {!selectedUser && (
                   <div className="space-y-2">
                     <label className="text-xs font-black text-admin-navy uppercase tracking-widest ml-1">Password</label>
-                    <input 
-                      type="password" 
+                    <input
+                      type="password"
                       required
                       className="w-full h-14 px-6 bg-admin-bg border border-transparent rounded-2xl focus:bg-white focus:border-accent/40 focus:ring-4 focus:ring-accent/5 transition-all outline-none font-bold"
                       value={formData.password}
-                      onChange={e => setFormData({...formData, password: e.target.value})}
+                      onChange={e => setFormData({ ...formData, password: e.target.value })}
                     />
                   </div>
                 )}
 
                 <div className="flex items-center gap-3 pt-4">
-                  <button 
+                  <button
                     type="button"
-                    onClick={() => setFormData({...formData, is_active: !formData.is_active})}
+                    onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}
                     className={`w-12 h-6 rounded-full transition-colors relative ${formData.is_active ? 'bg-green-500' : 'bg-admin-muted'}`}
                   >
                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.is_active ? 'left-7' : 'left-1'}`} />
@@ -359,14 +361,14 @@ export const StaffPage: React.FC = () => {
                 </div>
 
                 <div className="flex justify-end gap-4 mt-10">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setIsModalOpen(false)}
                     className="h-14 px-8 rounded-2xl font-black uppercase tracking-tight text-admin-navy hover:bg-admin-bg transition-colors"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="h-14 px-10 bg-accent text-white rounded-2xl font-black uppercase tracking-tight shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 transition-all"
                   >
@@ -387,12 +389,12 @@ export const StaffPage: React.FC = () => {
             <div className="p-10">
               <h2 className="text-2xl font-heading font-black text-admin-navy uppercase italic mb-2">Reset Password</h2>
               <p className="text-admin-muted font-bold mb-8">Set a new password for {selectedUser?.first_name}.</p>
-              
+
               <form onSubmit={handleResetPassword} className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-admin-navy uppercase tracking-widest ml-1">New Password</label>
-                  <input 
-                    type="password" 
+                  <input
+                    type="password"
                     required
                     className="w-full h-14 px-6 bg-admin-bg border border-transparent rounded-2xl focus:bg-white focus:border-accent/40 focus:ring-4 focus:ring-accent/5 transition-all outline-none font-bold"
                     value={passwordData.password}
@@ -401,14 +403,14 @@ export const StaffPage: React.FC = () => {
                 </div>
 
                 <div className="flex justify-end gap-4 mt-8">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setIsPasswordModalOpen(false)}
                     className="h-12 px-6 rounded-2xl font-black uppercase tracking-tight text-admin-navy hover:bg-admin-bg transition-colors"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="h-12 px-8 bg-admin-navy text-white rounded-2xl font-black uppercase tracking-tight shadow-lg shadow-admin-navy/20 hover:scale-105 active:scale-95 transition-all"
                   >

@@ -4,6 +4,15 @@ class IsSuperAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated and request.user.role == 'SUPER_ADMIN')
 
+class IsManager(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated and request.user.role == 'MANAGER')
+
+class IsManagerOrSuperAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        allowed_roles = ['SUPER_ADMIN', 'MANAGER']
+        return bool(request.user and request.user.is_authenticated and request.user.role in allowed_roles)
+
 class IsSalesAgent(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated and request.user.role == 'SALES_AGENT')

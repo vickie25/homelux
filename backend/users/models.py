@@ -28,6 +28,7 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     class Role(models.TextChoices):
         SUPER_ADMIN = 'SUPER_ADMIN', _('Super Admin')
+        MANAGER = 'MANAGER', _('Manager')
         SALES_AGENT = 'SALES_AGENT', _('Sales Agent')
         DISPATCHER = 'DISPATCHER', _('Dispatcher')
         FUNDI = 'FUNDI', _('Fundi (Technician)')

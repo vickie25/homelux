@@ -91,17 +91,17 @@ function App() {
         {/* Admin Dashboard Routes */}
         <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           <Route path="dashboard" element={<AdminDashboardHome />} />
-          <Route path="orders" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'SALES_AGENT', 'DISPATCHER']}><OrdersPage /></ProtectedRoute>} />
-          <Route path="products" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'SALES_AGENT', 'INVENTORY_MANAGER']}><ProductsPage /></ProtectedRoute>} />
-          <Route path="categories" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'INVENTORY_MANAGER']}><CategoriesPage /></ProtectedRoute>} />
-          <Route path="customers" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'SALES_AGENT']}><CustomersPage /></ProtectedRoute>} />
-          <Route path="inventory" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'INVENTORY_MANAGER']}><InventoryPage /></ProtectedRoute>} />
-          <Route path="promotions" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'INVENTORY_MANAGER']}><PromotionsPage /></ProtectedRoute>} />
-          <Route path="delivery" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'DISPATCHER', 'DRIVER']}><DeliveryPage /></ProtectedRoute>} />
-          <Route path="financials" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ACCOUNTANT']}><FinancialsPage /></ProtectedRoute>} />
-          <Route path="showrooms" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'INVENTORY_MANAGER']}><AdminShowroomsPage /></ProtectedRoute>} />
-          <Route path="reviews" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']}><ReviewsPage /></ProtectedRoute>} />
-          <Route path="reports" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ACCOUNTANT']}><ReportsPage /></ProtectedRoute>} />
+          <Route path="orders" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'SALES_AGENT', 'DISPATCHER']}><OrdersPage /></ProtectedRoute>} />
+          <Route path="products" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'SALES_AGENT', 'INVENTORY_MANAGER']}><ProductsPage /></ProtectedRoute>} />
+          <Route path="categories" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'INVENTORY_MANAGER']}><CategoriesPage /></ProtectedRoute>} />
+          <Route path="customers" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'SALES_AGENT']}><CustomersPage /></ProtectedRoute>} />
+          <Route path="inventory" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'INVENTORY_MANAGER']}><InventoryPage /></ProtectedRoute>} />
+          <Route path="promotions" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'INVENTORY_MANAGER']}><PromotionsPage /></ProtectedRoute>} />
+          <Route path="delivery" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'DISPATCHER', 'DRIVER']}><DeliveryPage /></ProtectedRoute>} />
+          <Route path="financials" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'ACCOUNTANT']}><FinancialsPage /></ProtectedRoute>} />
+          <Route path="showrooms" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'INVENTORY_MANAGER']}><AdminShowroomsPage /></ProtectedRoute>} />
+          <Route path="reviews" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER']}><ReviewsPage /></ProtectedRoute>} />
+          <Route path="reports" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MANAGER', 'ACCOUNTANT']}><ReportsPage /></ProtectedRoute>} />
           <Route path="staff" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']}><StaffPage /></ProtectedRoute>} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
