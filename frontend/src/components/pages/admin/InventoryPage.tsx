@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   MapPin, 
@@ -15,58 +15,52 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../../../lib/utils';
-
-// Dummy Data
-const INVENTORY_ITEMS = [
-  {
-    id: 'SKU-001-HLY',
-    name: 'Hollyann 3-Seater Sofa',
-    location: 'Central Warehouse',
-    stock: 12,
-    reserved: 4,
-    available: 8,
-    status: 'Stable',
-    unitPrice: '145,000'
-  },
-  {
-    id: 'SKU-002-FNC',
-    name: 'Finch Bedroom Set',
-    location: 'Mombasa Showroom',
-    stock: 5,
-    reserved: 2,
-    available: 3,
-    status: 'Critical',
-    unitPrice: '285,000'
-  },
-  {
-    id: 'SKU-003-MSH',
-    name: 'Mesh Office Chair',
-    location: 'Nairobi Westlands',
-    stock: 45,
-    reserved: 10,
-    available: 35,
-    status: 'Overstocked',
-    unitPrice: '24,500'
-  },
-  {
-    id: 'SKU-004-MBL',
-    name: 'Marble Dining Table',
-    location: 'Central Warehouse',
-    stock: 0,
-    reserved: 0,
-    available: 0,
-    status: 'Out of Stock',
-    unitPrice: '112,000'
-  }
-];
-
-const STOCK_MOVEMENTS = [
-  { id: 'MOV-101', type: 'Incoming', item: 'Finch Bed', qty: 10, from: 'Factory', to: 'Central', date: '10 mins ago' },
-  { id: 'MOV-102', type: 'Outgoing', item: 'Hollyann Sofa', qty: 1, from: 'Central', to: 'Customer #4521', date: '25 mins ago' },
-  { id: 'MOV-103', type: 'Transfer', item: 'Mesh Chair', qty: 5, from: 'Central', to: 'Westlands', date: '1 hr ago' },
-];
+import { inventoryApi } from '../../../lib/api';
+import { toast } from 'sonner';
 
 export const InventoryPage: React.FC = () => {
+  const [search, setSearch] = useState('');
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalSkus: 0,
+    lowStock: 0,
+    warehouseCapacity: 0
+  });
+
+  const fetchInventory = async () => {
+    setIsLoading(true);
+    try {
+      const response = await inventoryApi.list({ search: search || undefined });
+      const data = response.data.results || response.data;
+      setInventory(data);
+      
+      // Calculate simple stats
+      setStats({
+        totalSkus: data.length,
+        lowStock: data.filter((i: any) => i.stock_quantity <= i.low_stock_threshold).length,
+        warehouseCapacity: 84 // Mocked for now or can be derived
+      });
+    } catch (error) {
+      console.error('Failed to fetch inventory:', error);
+      toast.error('Failed to load inventory data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchInventory();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const STOCK_MOVEMENTS = [
+    { id: 'MOV-101', type: 'Incoming', item: 'Finch Bed', qty: 10, from: 'Factory', to: 'Central', date: '10 mins ago' },
+    { id: 'MOV-102', type: 'Outgoing', item: 'Hollyann Sofa', qty: 1, from: 'Central', to: 'Customer #4521', date: '25 mins ago' },
+    { id: 'MOV-103', type: 'Transfer', item: 'Mesh Chair', qty: 5, from: 'Central', to: 'Westlands', date: '1 hr ago' },
+  ];
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Section */}
@@ -77,7 +71,7 @@ export const InventoryPage: React.FC = () => {
           </h1>
           <p className="text-xs text-admin-muted font-black tracking-[0.2em] mt-2 uppercase flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-            Monitoring 428 Total SKUs
+            Monitoring {stats.totalSkus} Total SKUs
           </p>
         </div>
         
@@ -107,10 +101,10 @@ export const InventoryPage: React.FC = () => {
            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center">
               <AlertTriangle className="w-8 h-8 text-red-500" />
            </div>
-           <div>
+            <div>
               <p className="text-[10px] text-admin-muted font-black uppercase tracking-widest">Low Stock Alerts</p>
-              <h3 className="text-2xl font-black text-primary italic uppercase tracking-tighter">12 <span className="text-xs font-bold font-body text-red-500">Urgent</span></h3>
-           </div>
+              <h3 className="text-2xl font-black text-primary italic uppercase tracking-tighter">{stats.lowStock} <span className="text-xs font-bold font-body text-red-500">Urgent</span></h3>
+            </div>
         </div>
         <div className="bg-admin-navy p-8 rounded-[2rem] text-white flex items-center gap-6">
            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
@@ -132,7 +126,7 @@ export const InventoryPage: React.FC = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-admin-muted group-focus-within:text-accent transition-colors" />
                 <input
                   type="text"
-                  placeholder="Search by SKU or Product..."
+                  onChange={(e) => setSearch(e.target.value)}
                   className="w-full h-11 pl-12 pr-4 glass-input rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/20"
                 />
              </div>
@@ -155,42 +149,54 @@ export const InventoryPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/20">
-                  {INVENTORY_ITEMS.map((item) => (
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={5} className="px-8 py-12 text-center">
+                        <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto" />
+                      </td>
+                    </tr>
+                  ) : inventory.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-8 py-12 text-center text-admin-muted font-black uppercase tracking-widest">
+                        No inventory items found
+                      </td>
+                    </tr>
+                  ) : inventory.map((item) => (
                     <tr key={item.id} className="hover:bg-white/40 transition-all duration-300 group cursor-pointer">
                       <td className="px-8 py-6">
-                        <p className="text-sm font-black text-primary uppercase tracking-tight">{item.name}</p>
-                        <p className="text-[10px] text-admin-muted font-black tracking-widest uppercase">{item.id}</p>
+                        <p className="text-sm font-black text-primary uppercase tracking-tight">{item.product_name}</p>
+                        <p className="text-[10px] text-admin-muted font-black tracking-widest uppercase">{item.product_sku}</p>
                       </td>
                       <td className="px-8 py-6">
-                         <div className="flex items-center gap-2 text-xs font-bold text-admin-muted">
+                         <div className="flex items-center gap-2 text-xs font-bold text-admin-muted uppercase">
                             <MapPin className="w-3.5 h-3.5" />
-                            {item.location}
+                            {item.showroom_name}
                          </div>
                       </td>
                       <td className="px-8 py-6">
                          <span className={cn(
                            "premium-badge",
-                           item.status === 'Stable' && "bg-green-100 text-green-700 border-green-200",
-                           item.status === 'Critical' && "bg-red-100 text-red-700 border-red-200",
-                           item.status === 'Overstocked' && "bg-blue-100 text-blue-700 border-blue-200",
-                           item.status === 'Out of Stock' && "bg-admin-bg text-admin-muted border-admin-border",
+                           item.stock_quantity > item.low_stock_threshold ? "bg-green-100 text-green-700 border-green-200" : "bg-red-100 text-red-700 border-red-200",
                          )}>
-                           {item.status}
+                           {item.stock_quantity > item.low_stock_threshold ? 'Stable' : 'Low Stock'}
                          </span>
                       </td>
                       <td className="px-8 py-6">
                          <div className="flex flex-col">
-                            <span className="text-sm font-black text-primary">{item.available} <span className="text-[10px] text-admin-muted font-black">/ {item.stock}</span></span>
+                            <span className="text-sm font-black text-primary">{item.stock_quantity} <span className="text-[10px] text-admin-muted font-black">Units</span></span>
                             <div className="w-16 h-1 bg-admin-bg rounded-full mt-1 overflow-hidden">
                                <div 
-                                 className="h-full bg-primary" 
-                                 style={{ width: `${(item.available / item.stock) * 100 || 0}%` }}
+                                 className={cn(
+                                   "h-full",
+                                   item.stock_quantity > item.low_stock_threshold ? "bg-primary" : "bg-red-500"
+                                 )} 
+                                 style={{ width: `${Math.min((item.stock_quantity / 50) * 100, 100)}%` }}
                                />
                             </div>
                          </div>
                       </td>
                       <td className="px-8 py-6 text-sm font-black text-primary italic uppercase tracking-tighter">
-                        KShs {item.unitPrice}
+                        KShs {new Intl.NumberFormat('en-KE').format(item.product_price || 0)}
                       </td>
                     </tr>
                   ))}

@@ -18,67 +18,35 @@ import {
 import { motion } from 'framer-motion';
 import { cn } from '../../../lib/utils';
 
-// Dummy Data
-const CUSTOMERS = [
-  {
-    id: 'CUST-8821',
-    name: 'Sarah Waweru',
-    email: 'sarah.w@homelux.co.ke',
-    phone: '+254 712 345 678',
-    orders: 14,
-    totalSpent: '1.2M',
-    segment: 'VIP',
-    lastActive: '2 hours ago',
-    location: 'Nairobi, KE'
-  },
-  {
-    id: 'CUST-8822',
-    name: 'John Otieno',
-    email: 'john.o@gmail.com',
-    phone: '+254 722 000 111',
-    orders: 3,
-    totalSpent: '450K',
-    segment: 'Regular',
-    lastActive: '1 day ago',
-    location: 'Mombasa, KE'
-  },
-  {
-    id: 'CUST-8823',
-    name: 'Grace Kimani',
-    email: 'grace.k@outlook.com',
-    phone: '+254 733 999 888',
-    orders: 28,
-    totalSpent: '2.8M',
-    segment: 'VIP',
-    lastActive: 'Just now',
-    location: 'Eldoret, KE'
-  },
-  {
-    id: 'CUST-8824',
-    name: 'David Musyoka',
-    email: 'david.m@yahoo.com',
-    phone: '+254 701 222 333',
-    orders: 1,
-    totalSpent: '12K',
-    segment: 'New',
-    lastActive: '5 days ago',
-    location: 'Kisumu, KE'
-  },
-  {
-    id: 'CUST-8825',
-    name: 'Mary Achieng',
-    email: 'mary.a@gmail.com',
-    phone: '+254 711 444 555',
-    orders: 0,
-    totalSpent: '0',
-    segment: 'Lead',
-    lastActive: '1 week ago',
-    location: 'Nakuru, KE'
-  }
-];
+import { customersApi } from '../../../lib/api';
+import { toast } from 'sonner';
 
 export const CustomersPage: React.FC = () => {
   const [search, setSearch] = useState('');
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchCustomers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await customersApi.list({ search: search || undefined });
+      // If backend returns paginated results, use results. Otherwise use response.data
+      const data = response.data.results || response.data;
+      setCustomers(data);
+    } catch (error) {
+      console.error('Failed to fetch customers:', error);
+      toast.error('Failed to load customers');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchCustomers();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -90,7 +58,7 @@ export const CustomersPage: React.FC = () => {
           </h1>
           <p className="text-xs text-admin-muted font-black tracking-[0.2em] mt-2 uppercase flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            Managing {CUSTOMERS.length} Elite Relationships
+            Managing {customers.length} Elite Relationships
           </p>
         </div>
 
@@ -166,15 +134,29 @@ export const CustomersPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/20">
-              {CUSTOMERS.map((cust) => (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-8 py-12 text-center">
+                    <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto" />
+                  </td>
+                </tr>
+              ) : customers.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-8 py-12 text-center text-admin-muted font-black uppercase tracking-widest">
+                    No customers found
+                  </td>
+                </tr>
+              ) : customers.map((cust) => (
                 <tr key={cust.id} className="hover:bg-white/40 transition-all duration-300 group">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-admin-bg border border-white/60 shadow-sm flex items-center justify-center text-xs font-black text-primary italic">
-                        {cust.name.split(' ').map(n => n[0]).join('')}
+                      <div className="w-12 h-12 rounded-full bg-admin-bg border border-white/60 shadow-sm flex items-center justify-center text-xs font-black text-primary italic uppercase">
+                        {cust.first_name?.[0]}{cust.last_name?.[0]}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-black text-primary truncate uppercase tracking-tight">{cust.name}</p>
+                        <p className="text-sm font-black text-primary truncate uppercase tracking-tight">
+                          {cust.first_name} {cust.last_name}
+                        </p>
                         <p className="text-[10px] text-admin-muted font-black tracking-widest uppercase">{cust.email}</p>
                       </div>
                     </div>
@@ -182,28 +164,25 @@ export const CustomersPage: React.FC = () => {
                   <td className="px-8 py-6">
                     <span className={cn(
                       "premium-badge",
-                      cust.segment === 'VIP' && "bg-yellow-100 text-yellow-700 border-yellow-200",
-                      cust.segment === 'Regular' && "bg-blue-100 text-blue-700 border-blue-200",
-                      cust.segment === 'New' && "bg-green-100 text-green-700 border-green-200",
-                      cust.segment === 'Lead' && "bg-admin-bg text-admin-muted border-admin-border",
+                      cust.total_spent > 1000000 ? "bg-yellow-100 text-yellow-700 border-yellow-200" : "bg-blue-100 text-blue-700 border-blue-200"
                     )}>
-                      {cust.segment}
+                      {cust.total_spent > 1000000 ? 'VIP' : 'Regular'}
                     </span>
                   </td>
                   <td className="px-8 py-6">
-                    <div className="flex items-center gap-2 text-xs font-bold text-admin-muted">
+                    <div className="flex items-center gap-2 text-xs font-bold text-admin-muted uppercase tracking-tight">
                       <MapPin className="w-3 h-3" />
-                      {cust.location}
+                      {cust.city || 'N/A'}
                     </div>
                   </td>
                   <td className="px-8 py-6">
                     <div className="flex flex-col">
-                      <span className="text-sm font-black text-primary">{cust.orders}</span>
+                      <span className="text-sm font-black text-primary">{cust.orders_count || 0}</span>
                       <span className="text-[10px] text-admin-muted font-black uppercase tracking-widest">Completed</span>
                     </div>
                   </td>
                   <td className="px-8 py-6 text-sm font-black text-primary italic uppercase tracking-tighter">
-                    KShs {cust.totalSpent}
+                    KShs {new Intl.NumberFormat('en-KE').format(cust.total_spent)}
                   </td>
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-2">
@@ -213,9 +192,6 @@ export const CustomersPage: React.FC = () => {
                       <button className="p-2 hover:bg-white rounded-lg transition-all group/btn" title="View Profile">
                         <Eye className="w-4 h-4 text-admin-muted group-hover/btn:text-blue-500" />
                       </button>
-                      <button className="p-2 hover:bg-white rounded-lg transition-all group/btn">
-                        <MoreHorizontal className="w-4 h-4 text-admin-muted" />
-                      </button>
                     </div>
                   </td>
                 </tr>
@@ -224,7 +200,7 @@ export const CustomersPage: React.FC = () => {
           </table>
         </div>
         <div className="p-6 bg-white/20 border-t border-white/20 flex items-center justify-between">
-          <p className="text-[10px] text-admin-muted font-black uppercase tracking-widest">Showing {CUSTOMERS.length} Clients</p>
+          <p className="text-[10px] text-admin-muted font-black uppercase tracking-widest">Showing {customers.length} Clients</p>
           <div className="flex gap-2">
             <button className="px-4 py-2 glass-card rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">Previous</button>
             <button className="px-4 py-2 glass-card rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">Next</button>
@@ -234,3 +210,7 @@ export const CustomersPage: React.FC = () => {
     </div>
   );
 };
+function useEffect(arg0: () => () => void, arg1: string[]) {
+  throw new Error('Function not implemented.');
+}
+

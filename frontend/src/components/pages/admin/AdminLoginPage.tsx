@@ -4,6 +4,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { motion } from 'framer-motion';
 import { cn } from '../../../lib/utils';
 import { useAuthStore } from '../../../hooks/useAuthStore';
+import { authApi } from '../../../lib/api';
 
 export const AdminLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -34,7 +35,7 @@ export const AdminLoginPage: React.FC = () => {
     }
 
     try {
-      const response = await authApi.login({ email, password });
+      const response = await authApi.login({ username: email, password });
       const { access, refresh } = response.data;
       
       await loginStore(access, refresh);

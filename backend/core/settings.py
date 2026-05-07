@@ -103,9 +103,12 @@ DATABASES = {
     }
 }
 
-CORS_ALLOWED_ORIGINS = [origin.strip() for origin in os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5174').split(',')] if os.getenv('CORS_ALLOWED_ORIGINS') else [
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:5174').split(',')] if os.getenv('CORS_ALLOWED_ORIGINS') else [
+    "http://localhost:5173",
     "http://localhost:5174",
 ]
+print(f"CORS Origins: {CORS_ALLOWED_ORIGINS}")
 
 
 # Password validation

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -31,38 +31,7 @@ import {
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { cn } from '../../../lib/utils';
-
-// Mock Data
-const REVENUE_DATA = [
-  { name: 'Jan', online: 4000, offline: 2400 },
-  { name: 'Feb', online: 3000, offline: 1398 },
-  { name: 'Mar', online: 2000, offline: 9800 },
-  { name: 'Apr', online: 2780, offline: 3908 },
-  { name: 'May', online: 1890, offline: 4800 },
-  { name: 'Jun', online: 2390, offline: 3800 },
-  { name: 'Jul', online: 3490, offline: 4300 },
-];
-
-const ORDER_STATUS_DATA = [
-  { name: 'Delivered', value: 68, color: '#10B981' },
-  { name: 'Processing', value: 14, color: '#3B82F6' },
-  { name: 'Pending', value: 11, color: '#F59E0B' },
-  { name: 'Cancelled', value: 7, color: '#EF4444' },
-];
-
-const RECENT_ORDERS = [
-  { id: '#FD-4521', customer: 'Grace Wanjiku', items: 3, total: 'KShs 145,000', status: 'Processing', date: '2 min ago' },
-  { id: '#FD-4520', customer: 'John Otieno', items: 1, total: 'KShs 84,995', status: 'Delivered', date: '12 min ago' },
-  { id: '#FD-4519', customer: 'Sarah Waweru', items: 2, total: 'KShs 232,540', status: 'Delivered', date: '1 hr ago' },
-  { id: '#FD-4518', customer: 'David Kimani', items: 5, total: 'KShs 412,000', status: 'Pending', date: '3 hrs ago' },
-  { id: '#FD-4517', customer: 'Mary Achieng', items: 1, total: 'KShs 12,500', status: 'Cancelled', date: '5 hrs ago' },
-];
-
-const TOP_PRODUCTS = [
-  { name: 'Hollyann 3-Seater Sofa', category: 'Living Room', sold: 42, revenue: '1.2M', growth: 12 },
-  { name: 'Finch Bedroom Set', category: 'Bedroom', sold: 38, revenue: '980K', growth: -2 },
-  { name: 'Mesh Office Chair', category: 'Office', sold: 29, revenue: '720K', growth: 8 },
-];
+import { dashboardApi } from '../../../lib/api';
 
 const StatCard = ({ label, value, trend, trendValue, icon: Icon, color }: any) => (
   <motion.div 
@@ -83,10 +52,10 @@ const StatCard = ({ label, value, trend, trendValue, icon: Icon, color }: any) =
       <div className="flex items-center gap-1.5 mt-2">
         <div className={cn(
           "flex items-center gap-0.5 text-xs font-black px-1.5 py-0.5 rounded-md",
-          trend === 'up' ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+          trend >= 0 ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
         )}>
-          {trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-          <span>{trendValue}</span>
+          {trend >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+          <span>{Math.abs(trend).toFixed(1)}%</span>
         </div>
         <span className="text-[10px] text-admin-muted font-bold uppercase tracking-widest">vs last month</span>
       </div>
@@ -95,39 +64,97 @@ const StatCard = ({ label, value, trend, trendValue, icon: Icon, color }: any) =
 );
 
 export const AdminDashboardHome: React.FC = () => {
+  const [stats, setStats] = useState<any>(null);
+  const [charts, setCharts] = useState<any>(null);
+  const [products, setProducts] = useState<any[]>([]);
+  const [activity, setActivity] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statsRes, chartsRes, productsRes, activityRes] = await Promise.all([
+          dashboardApi.getStats(),
+          dashboardApi.getCharts(),
+          dashboardApi.getTopProducts(),
+          dashboardApi.getActivityFeed()
+        ]);
+
+        setStats(statsRes.data);
+        setCharts(chartsRes.data);
+        setProducts(productsRes.data);
+        setActivity(activityRes.data);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[400px] flex flex-col items-center justify-center gap-4">
+        <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+        <p className="text-admin-muted font-bold text-sm uppercase tracking-widest">Aggregating store performance data...</p>
+      </div>
+    );
+  }
+
+  const kpis = stats?.kpis || {};
+  const trends = kpis.trends || {};
+  const statusDist = stats?.order_status || {};
+  
+  const orderStatusData = [
+    { name: 'Delivered', value: statusDist.DELIVERED || 0, color: '#10B981' },
+    { name: 'Processing', value: statusDist.PROCESSING || 0, color: '#3B82F6' },
+    { name: 'Pending', value: statusDist.PENDING || 0, color: '#F59E0B' },
+    { name: 'Cancelled', value: statusDist.CANCELLED || 0, color: '#EF4444' },
+  ].filter(item => item.value > 0);
+
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat('en-KE', {
+      style: 'currency',
+      currency: 'KES',
+      minimumFractionDigits: 0
+    }).format(val);
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
           label="Total Revenue" 
-          value="KShs 4,218,500" 
-          trend="up" 
-          trendValue="12.4%" 
+          value={formatCurrency(kpis.total_revenue || 0)} 
+          trend={trends.revenue_pct_change_30d || 0} 
+          trendValue={`${Math.abs(trends.revenue_pct_change_30d || 0).toFixed(1)}%`} 
           icon={DollarSign} 
           color="bg-admin-navy"
         />
         <StatCard 
           label="Total Orders" 
-          value="1,284" 
-          trend="up" 
-          trendValue="8.1%" 
+          value={kpis.total_orders || 0} 
+          trend={trends.orders_pct_change_30d || 0} 
+          trendValue={`${Math.abs(trends.orders_pct_change_30d || 0).toFixed(1)}%`} 
           icon={ShoppingCart} 
           color="bg-accent"
         />
         <StatCard 
           label="New Customers" 
-          value="342" 
-          trend="up" 
-          trendValue="15.2%" 
+          value={kpis.new_customers || 0} 
+          trend={trends.new_customers_pct_change_30d || 0} 
+          trendValue={`${Math.abs(trends.new_customers_pct_change_30d || 0).toFixed(1)}%`} 
           icon={Users} 
           color="bg-blue-500"
         />
         <StatCard 
           label="Avg Order Value" 
-          value="KShs 3,285" 
-          trend="down" 
-          trendValue="2.1%" 
+          value={formatCurrency(kpis.avg_order_value || 0)} 
+          trend={trends.avg_order_value_pct_change_30d || 0} 
+          trendValue={`${Math.abs(trends.avg_order_value_pct_change_30d || 0).toFixed(1)}%`} 
           icon={Activity} 
           color="bg-purple-500"
         />
@@ -153,7 +180,7 @@ export const AdminDashboardHome: React.FC = () => {
           </div>
           <div className="h-[350px] w-full min-w-0">
             <ResponsiveContainer width="99%" height="100%">
-              <AreaChart data={REVENUE_DATA}>
+              <AreaChart data={charts?.revenue_over_time || []}>
                 <defs>
                   <linearGradient id="colorOnline" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#F99D1C" stopOpacity={0.1}/>
@@ -216,7 +243,7 @@ export const AdminDashboardHome: React.FC = () => {
             <ResponsiveContainer width="99%" height="100%">
               <PieChart>
                 <Pie
-                  data={ORDER_STATUS_DATA}
+                  data={orderStatusData}
                   cx="50%"
                   cy="50%"
                   innerRadius={70}
@@ -224,7 +251,7 @@ export const AdminDashboardHome: React.FC = () => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {ORDER_STATUS_DATA.map((entry, index) => (
+                  {orderStatusData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -238,13 +265,13 @@ export const AdminDashboardHome: React.FC = () => {
           </div>
 
           <div className="space-y-4 mt-8">
-            {ORDER_STATUS_DATA.map((item) => (
+            {orderStatusData.map((item) => (
               <div key={item.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                   <span className="text-xs font-bold text-admin-text">{item.name}</span>
                 </div>
-                <span className="text-xs font-black text-admin-navy uppercase tracking-widest">{item.value}%</span>
+                <span className="text-xs font-black text-admin-navy uppercase tracking-widest">{item.value}</span>
               </div>
             ))}
           </div>
@@ -273,30 +300,30 @@ export const AdminDashboardHome: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-admin-border">
-                {RECENT_ORDERS.map((order) => (
+                {(activity?.recent_orders || []).map((order: any) => (
                   <tr key={order.id} className="hover:bg-admin-bg/30 transition-colors group cursor-pointer">
-                    <td className="px-8 py-5 font-black text-sm text-admin-navy group-hover:text-accent">{order.id}</td>
+                    <td className="px-8 py-5 font-black text-sm text-admin-navy group-hover:text-accent">{order.order_id}</td>
                     <td className="px-8 py-5">
                        <div className="flex items-center gap-3">
                          <div className="w-8 h-8 rounded-full bg-admin-bg border border-admin-border flex items-center justify-center text-[10px] font-black text-admin-navy">
-                           {order.customer.split(' ').map(n => n[0]).join('')}
+                           {order.order_id.substring(0, 2)}
                          </div>
-                         <span className="text-sm font-bold text-admin-text">{order.customer}</span>
+                         <span className="text-sm font-bold text-admin-text">Order #{order.order_id}</span>
                        </div>
                     </td>
-                    <td className="px-8 py-5 font-black text-sm text-admin-navy">{order.total}</td>
+                    <td className="px-8 py-5 font-black text-sm text-admin-navy">{formatCurrency(order.total_amount)}</td>
                     <td className="px-8 py-5">
                       <span className={cn(
                         "text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest",
-                        order.status === 'Delivered' && "bg-green-100 text-green-700",
-                        order.status === 'Processing' && "bg-blue-100 text-blue-700",
-                        order.status === 'Pending' && "bg-yellow-100 text-yellow-700",
-                        order.status === 'Cancelled' && "bg-red-100 text-red-700",
+                        order.status === 'DELIVERED' && "bg-green-100 text-green-700",
+                        order.status === 'PROCESSING' && "bg-blue-100 text-blue-700",
+                        order.status === 'PENDING' && "bg-yellow-100 text-yellow-700",
+                        order.status === 'CANCELLED' && "bg-red-100 text-red-700",
                       )}>
                         {order.status}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-xs text-admin-muted font-bold">{order.date}</td>
+                    <td className="px-8 py-5 text-xs text-admin-muted font-bold">{new Date(order.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -310,22 +337,17 @@ export const AdminDashboardHome: React.FC = () => {
            <div className="bg-white p-8 rounded-[2rem] border border-admin-border shadow-admin">
              <h2 className="text-xl font-heading font-black text-admin-navy tracking-tight uppercase mb-6">Top Selling</h2>
              <div className="space-y-6">
-                {TOP_PRODUCTS.map((product) => (
-                  <div key={product.name} className="flex items-center gap-4 group cursor-pointer">
+                {(products || []).map((product: any) => (
+                  <div key={product.product_id} className="flex items-center gap-4 group cursor-pointer">
                     <div className="w-14 h-14 rounded-2xl bg-admin-bg border border-admin-border flex items-center justify-center flex-shrink-0 group-hover:border-accent transition-all ring-accent/0 group-hover:ring-4 ring-offset-2">
                        <Package className="w-6 h-6 text-admin-navy group-hover:text-accent transition-colors" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-black text-admin-navy truncate uppercase tracking-tight">{product.name}</p>
-                      <p className="text-[10px] text-admin-muted font-bold tracking-widest uppercase">{product.category}</p>
+                      <p className="text-[10px] text-admin-muted font-bold tracking-widest uppercase">SKU: {product.sku}</p>
                       <div className="flex items-center justify-between mt-2">
-                         <span className="text-xs font-black text-admin-text">KShs {product.revenue}</span>
-                         <span className={cn(
-                           "text-[10px] font-black",
-                           product.growth >= 0 ? "text-green-500" : "text-red-500"
-                         )}>
-                            {product.growth >= 0 ? '+' : ''}{product.growth}%
-                         </span>
+                         <span className="text-xs font-black text-admin-text">{formatCurrency(product.revenue)}</span>
+                         <span className="text-[10px] font-black text-accent">{product.sold} sold</span>
                       </div>
                     </div>
                   </div>
@@ -343,33 +365,41 @@ export const AdminDashboardHome: React.FC = () => {
                 Live Feed
               </h2>
               <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <ShoppingCart className="w-4 h-4 text-accent" />
+                {(activity?.recent_orders || []).slice(0, 2).map((order: any) => (
+                  <div key={order.id} className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <ShoppingCart className="w-4 h-4 text-accent" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold leading-tight">New Order <span className="text-accent">#{order.order_id}</span> received</p>
+                      <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">{new Date(order.created_at).toLocaleTimeString()}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold leading-tight">New Order <span className="text-accent">#HX-4521</span> received</p>
-                    <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">2 MINS AGO</p>
+                ))}
+                
+                {(activity?.low_stock_alerts || []).slice(0, 2).map((alert: any) => (
+                  <div key={alert.id} className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <AlertTriangle className="w-4 h-4 text-yellow-400" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold leading-tight">Low stock for <span className="text-yellow-400">"{alert.product__name}"</span> at {alert.showroom__name}</p>
+                      <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">{alert.stock_quantity} left</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <AlertTriangle className="w-4 h-4 text-yellow-400" />
+                ))}
+
+                {(activity?.recent_customers || []).slice(0, 2).map((cust: any) => (
+                  <div key={cust.id} className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <Users className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold leading-tight">New customer <span className="text-blue-400">"{cust.first_name} {cust.last_name}"</span> joined</p>
+                      <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">{new Date(cust.created_at).toLocaleTimeString()}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold leading-tight">Low stock alert for <span className="text-yellow-400">"Finch Bed"</span></p>
-                    <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">12 MINS AGO</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <Users className="w-4 h-4 text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold leading-tight">New customer <span className="text-blue-400">"Sarah M."</span> registered</p>
-                    <p className="text-[10px] text-white/40 font-black mt-1 uppercase tracking-widest">1 HR AGO</p>
-                  </div>
-                </div>
+                ))}
               </div>
            </div>
         </div>
@@ -377,3 +407,4 @@ export const AdminDashboardHome: React.FC = () => {
     </div>
   );
 };
+

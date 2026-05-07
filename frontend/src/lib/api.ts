@@ -36,4 +36,48 @@ export const staffApi = {
   resetPassword: (id: number, data: any) => api.post(`/staff/${id}/reset_password/`, data),
 };
 
+export const customersApi = {
+  list: (params?: any) => api.get('/customers/', { params }),
+  get: (id: string) => api.get(`/customers/${id}/`),
+  create: (data: any) => api.post('/customers/', data),
+  update: (id: string, data: any) => api.patch(`/customers/${id}/`, data),
+  delete: (id: string) => api.delete(`/customers/${id}/`),
+};
+
+export const productsApi = {
+  list: (params?: any) => api.get('/products/', { params }),
+  get: (id: string) => api.get(`/products/${id}/`),
+  create: (data: any) => api.post('/products/', data),
+  update: (id: string, data: any) => api.patch(`/products/${id}/`, data),
+  delete: (id: string) => api.delete(`/products/${id}/`),
+  
+  categories: {
+    list: (params?: any) => api.get('/categories/', { params }),
+    get: (id: string) => api.get(`/categories/${id}/`),
+    create: (data: any) => api.post('/categories/', data),
+    update: (id: string, data: any) => api.patch(`/categories/${id}/`, data),
+    delete: (id: string) => api.delete(`/categories/${id}/`),
+  }
+};
+
+export const inventoryApi = {
+  list: (params?: any) => api.get('/stock-records/', { params }),
+  update: (id: number, data: any) => api.patch(`/stock-records/${id}/`, data),
+  showrooms: {
+    list: (params?: any) => api.get('/showrooms/', { params }),
+    get: (id: number) => api.get(`/showrooms/${id}/`),
+  }
+};
+
+export const dashboardApi = {
+  getStats: () => api.get('/dashboard/stats/'),
+  getCharts: () => api.get('/dashboard/charts/'),
+  getTopProducts: () => api.get('/dashboard/top-products/'),
+  getActivityFeed: () => api.get('/dashboard/activity-feed/'),
+  getFinancials: () => api.get('/dashboard/financials/summary/'),
+  getReports: () => api.get('/dashboard/reports/overview/'),
+  getReviews: () => api.get('/dashboard/reviews/summary/'),
+  getSettings: () => api.get('/dashboard/settings/'),
+};
+
 export default api;
